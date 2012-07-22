@@ -1,67 +1,104 @@
-try:
+try:# for python 3
     from tkinter import *
     from tkinter import ttk
-except ImportError:
+except ImportError:# for python 2
     from Tkinter import *
     import ttk
 
 # Helper class to make labels and input
 class Input(ttk.Frame):
-    def __init__(self, parent, text):
+    def __init__(self, parent, widget='entry', **kw):
         ttk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text=text)
-        entry = ttk.Entry(self)
-        # placement
-        label.grid(column=0, row=0, columnspan=2, sticky=(W))
-        entry.grid(column=3, row=0, columnspan=2, sticky=(W, E))
+        rows = 0
+        cols = 0
+
+        if widget == 'entry':
+            rows = 1; cols = 2
+            label = ttk.Label(self, text=kw.get('text'), justify='left')
+            label.grid(column=0, row=0, sticky=EW)
+            entry = ttk.Entry(self)
+            entry.grid(column=1, row=0, sticky=EW)
+
+        elif widget == 'check':
+            rows = cols = 1
+            checkbox = ttk.Checkbutton(self, text=kw.get('text'))
+            checkbox.grid(column=0, row=0, sticky=EW)
+
+        elif widget == 'combo':
+            rows = cols = 1
+            combobox = ttk.Combobox(self, values=kw.get('values'), state=('readonly',))
+            combobox.grid(column=0, row=0, sticky=EW)
+
+        else:
+            raise TypeError
+
+        for i in range(rows):
+            self.columnconfigure(i, weight=1)
+
+        for i in range(cols):
+            self.rowconfigure(i, weight=1)
 
 
-def main():
-    root = Tk()
-    root.title('grSim Sample Python Client')
-    content = ttk.Frame(root, padding=(12, 12, 12, 12))
+class Client(Tk):
 
-    # Controls
-    simulator_addr = Input(content, 'Simulator Address')
-    simulator_port = Input(content, 'Simulator Port')
-    robot_id = Input(content, 'Robot Id')
-    robot_color = ttk.Combobox(content, values=('Yellow', 'Blue'))
-    speed_x = Input(content, 'Speed X (m/s)')
-    speed_y = Input(content, 'Speed Y (m/s)')
-    speed_w = Input(content, 'Speed W (rad/s)')
-    is_speed = ttk.Checkbutton(content, text='Send linear speeds? (otherwise will use wheel speeds)')
-    wheel1 = Input(content, 'Wheel1 (rad/s)')
-    wheel2 = Input(content, 'Wheel2 (rad/s)')
-    wheel3 = Input(content, 'Wheel3 (rad/s)')
-    wheel4 = Input(content, 'Wheel4 (rad/s)')
-    chip = Input(content, 'Chip (m/s)')
-    kick = Input(content, 'Kick (m/s)')
-    is_spin = ttk.Checkbutton(content, text='Spin')
-    connect = ttk.Button(content, text='Connect')
-    send = ttk.Button(content, text='Send')
-    reset = ttk.Button(content, text='Reset')
+    def __init__(self):
+        Tk.__init__(self)
 
-    # General layout
-    def stack(col, widgets):
-        row = 0
-        for w in widgets:
-            w.grid(column=col, row=row, columnspan=2)
-            row += 1
+        self.title('grSim Sample Python Client')
+        content = ttk.Frame(self, padding=(12, 12, 12, 12))
 
-    stack(0, [simulator_addr, robot_id, speed_x, speed_y, speed_w, is_speed, chip, is_spin, connect])
-    stack(2, [simulator_port, robot_color, wheel1, wheel2, wheel3, wheel4, kick])
-    send.grid(column=2, row=8, columnspan=1)
-    reset.grid(column=3, row=8, columnspan=1)
-    content.grid(column=0, row=0, sticky=(N, S, E, W))
+        # Controls
+        sim_addr = Input(content, text='Simulator Address')
+        sim_port = Input(content, text='Simulator Port')
+        rob_id =   Input(content, text='Robot Id')
+        color =    Input(content, 'combo', values=('Yellow', 'Blue'))
+        speed_x =  Input(content, text='Speed X (m/s)')
+        speed_y =  Input(content, text='Speed Y (m/s)')
+        speed_w =  Input(content, text='Speed W (rad/s)')
+        is_speed = Input(content, 'check', text='Send linear speeds? (otherwise will use wheel speeds)')
+        wheel1 =   Input(content, text='Wheel1 (rad/s)')
+        wheel2 =   Input(content, text='Wheel2 (rad/s)')
+        wheel3 =   Input(content, text='Wheel3 (rad/s)')
+        wheel4 =   Input(content, text='Wheel4 (rad/s)')
+        chip =     Input(content, text='Chip (m/s)')
+        kick =     Input(content, text='Kick (m/s)')
+        is_spin =  Input(content, 'check', text='Spin')
 
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+        connect = ttk.Button(content, text='Connect')
+        frame =   ttk.Frame(content)
+        send =    ttk.Button(frame, text='Send')
+        reset =   ttk.Button(frame, text='Reset')
 
-    for i in range(4):
-        content.columnconfigure(i, weight=1)
-    for i in range(9):
-        content.rowconfigure(i, weight=1)
+        # General layout
+        def stack(col, widgets):
+            row = 0
+            for w in widgets:
+                if w is not None:
+                    w.grid(column=col, row=row, stick=EW)
+                row += 1
 
+        stack(0, [sim_addr, rob_id, speed_x, speed_y, speed_w, is_speed, chip, is_spin, connect])
+        stack(1, [sim_port, color, wheel1, wheel2, wheel3, wheel4, kick, None, frame])
+
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
+        frame.rowconfigure(0, weight=1)
+        send.grid(column=0, row=0, sticky=EW)
+        reset.grid(column=1, row=0, sticky=EW)
+        content.grid(column=0, row=0, sticky=NSEW)
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        for i in range(2):
+            content.columnconfigure(i, weight=1)
+
+        for i in range(9):
+            content.rowconfigure(i, weight=1)
+
+
+if __name__ == '__main__':
     # Let the magic begin
-    root.mainloop()
+    app = Client()
+    app.mainloop()
 
