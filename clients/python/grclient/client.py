@@ -41,15 +41,23 @@ class Input(ttk.Frame):
 
 class Client(Tk):
 
+    def loop(self):
+        #TODO: network loop goes here
+        pass
+
     def __init__(self):
         Tk.__init__(self)
 
+        # Attributes
+        self.interval = 50
+
+        # Window
         self.title('grSim Sample Python Client')
         self.resizable(width=False, height=False)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        content = ttk.Frame(self, padding=(12, 12, 12, 12))
+        content = ttk.Frame(self, padding=(10, 10, 10, 10))
 
         # Controls
         sim_addr = Input(content, text='Simulator Address')
@@ -96,6 +104,14 @@ class Client(Tk):
 
         for i in range(9):
             content.rowconfigure(i, weight=1)
+
+    def _bgloop(self):
+        self.loop()
+        self.after(self.interval, self._bgloop)
+
+    def mainloop(self):
+        self._bgloop()
+        Tk.mainloop(self)
 
 
 if __name__ == '__main__':
