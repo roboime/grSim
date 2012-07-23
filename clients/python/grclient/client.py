@@ -62,9 +62,10 @@ class Client(Tk):
         # on parse error use last packet
         try:
             packet = self.parse()
-            self._packet = packet
-        except TypeError:
+        except TypeError, ValueError:
             packet = self._packet
+        else:
+            self._packet = packet
 
         data = packet.SerializeToString()
         address = (self.sim_addr.value, int(self.sim_port.value))
@@ -75,7 +76,7 @@ class Client(Tk):
 
         cc = p.commands
         cc.timestamp = time.time()
-        cc.isteamyellow = self.color == 'Yellow'
+        cc.isteamyellow = self.color.value == 'Yellow'
 
         c = cc.robot_commands.add()
         c.id = int(self.rob_id.value)
