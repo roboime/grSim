@@ -45,6 +45,10 @@ class Client(Tk):
         Tk.__init__(self)
 
         self.title('grSim Sample Python Client')
+        self.resizable(width=False, height=False)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
         content = ttk.Frame(self, padding=(12, 12, 12, 12))
 
         # Controls
@@ -55,7 +59,7 @@ class Client(Tk):
         speed_x =  Input(content, text='Speed X (m/s)')
         speed_y =  Input(content, text='Speed Y (m/s)')
         speed_w =  Input(content, text='Speed W (rad/s)')
-        is_speed = Input(content, 'check', text='Send linear speeds? (otherwise will use wheel speeds)')
+        is_speed = Input(content, 'check', text='Speeds? (otherwise wheels)')
         wheel1 =   Input(content, text='Wheel1 (rad/s)')
         wheel2 =   Input(content, text='Wheel2 (rad/s)')
         wheel3 =   Input(content, text='Wheel3 (rad/s)')
@@ -77,7 +81,7 @@ class Client(Tk):
                     w.grid(column=col, row=row, stick=EW)
                 row += 1
 
-        stack(0, [sim_addr, rob_id, speed_x, speed_y, speed_w, is_speed, chip, is_spin, connect])
+        stack(0, [sim_addr, rob_id, is_speed, speed_x, speed_y, speed_w, chip, is_spin, connect])
         stack(1, [sim_port, color, wheel1, wheel2, wheel3, wheel4, kick, None, frame])
 
         frame.columnconfigure(0, weight=1)
@@ -86,9 +90,6 @@ class Client(Tk):
         send.grid(column=0, row=0, sticky=EW)
         reset.grid(column=1, row=0, sticky=EW)
         content.grid(column=0, row=0, sticky=NSEW)
-
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
 
         for i in range(2):
             content.columnconfigure(i, weight=1)
