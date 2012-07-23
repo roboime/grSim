@@ -68,8 +68,7 @@ class Client(Tk):
 
         data = packet.SerializeToString()
         address = (self.sim_addr.value, int(self.sim_port.value))
-        sent = self.socket.sendto(data, address)
-        print sent
+        self.socket.sendto(data, address)
 
     def parse(self):
         p = Packet()
