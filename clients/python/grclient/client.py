@@ -56,11 +56,13 @@ class Client(Tk):
         #TODO: network loop goes here
         pass
 
-    def connect(self):
-        pass
-
-    def send(self):
-        pass
+    def toggle(self):
+        self.send = not self.send
+        if self.send:
+            self.togglelabel.set('Stop')
+            self.doloop()
+        else:
+            self.togglelabel.set('Start')
 
     def reset(self):
         self.sim_addr.value = '127.0.0.1'
@@ -84,6 +86,7 @@ class Client(Tk):
 
         # Attributes
         self.interval = 50
+        self.send = False
 
         # Window
         self.title('grSim Sample Python Client')
@@ -110,10 +113,10 @@ class Client(Tk):
         self.kick =     Input(content, text='Kick (m/s)')
         self.is_spin =  Input(content, 'check', text='Spin')
 
-        connect = ttk.Button(content, text='Connect', command=self.connect)
-        frame =   ttk.Frame(content)
-        send =    ttk.Button(frame, text='Send', command=self.send)
-        reset =   ttk.Button(frame, text='Reset', command=self.reset)
+        self.togglelabel = StringVar()
+        self.togglelabel.set('Start')
+        start = ttk.Button(content, command=self.toggle, textvariable=self.togglelabel)
+        reset = ttk.Button(content, text='Reset', command=self.reset)
 
         # reset the controls
         self.reset()
@@ -126,14 +129,9 @@ class Client(Tk):
                     w.grid(column=col, row=row, stick=EW)
                 row += 1
 
-        stack(0, [self.sim_addr, self.rob_id, self.is_speed, self.speed_x, self.speed_y, self.speed_w, self.chip, self.is_spin, connect])
-        stack(1, [self.sim_port, self.color, self.wheel1, self.wheel2, self.wheel3, self.wheel4, self.kick, None, frame])
+        stack(0, [self.sim_addr, self.rob_id, self.is_speed, self.speed_x, self.speed_y, self.speed_w, self.chip, self.is_spin, start])
+        stack(1, [self.sim_port, self.color, self.wheel1, self.wheel2, self.wheel3, self.wheel4, self.kick, None, reset])
 
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
-        frame.rowconfigure(0, weight=1)
-        send.grid(column=0, row=0, sticky=EW)
-        reset.grid(column=1, row=0, sticky=EW)
         content.grid(column=0, row=0, sticky=NSEW)
 
         for i in range(2):
@@ -142,13 +140,10 @@ class Client(Tk):
         for i in range(9):
             content.rowconfigure(i, weight=1)
 
-    def _bgloop(self):
+    def doloop(self):
         self.loop()
-        self.after(self.interval, self._bgloop)
-
-    def mainloop(self):
-        self._bgloop()
-        Tk.mainloop(self)
+        if self.send == True:
+            self.after(self.interval, self.doloop)
 
 
 if __name__ == '__main__':
