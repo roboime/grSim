@@ -45,6 +45,15 @@ class Client(Tk):
         #TODO: network loop goes here
         pass
 
+    def connect(self):
+        pass
+
+    def send(self):
+        pass
+
+    def reset(self):
+        pass
+
     def __init__(self):
         Tk.__init__(self)
 
@@ -60,26 +69,26 @@ class Client(Tk):
         content = ttk.Frame(self, padding=(10, 10, 10, 10))
 
         # Controls
-        sim_addr = Input(content, text='Simulator Address')
-        sim_port = Input(content, text='Simulator Port')
-        rob_id =   Input(content, text='Robot Id')
-        color =    Input(content, 'combo', values=('Yellow', 'Blue'))
-        speed_x =  Input(content, text='Speed X (m/s)')
-        speed_y =  Input(content, text='Speed Y (m/s)')
-        speed_w =  Input(content, text='Speed W (rad/s)')
-        is_speed = Input(content, 'check', text='Speeds? (otherwise wheels)')
-        wheel1 =   Input(content, text='Wheel1 (rad/s)')
-        wheel2 =   Input(content, text='Wheel2 (rad/s)')
-        wheel3 =   Input(content, text='Wheel3 (rad/s)')
-        wheel4 =   Input(content, text='Wheel4 (rad/s)')
-        chip =     Input(content, text='Chip (m/s)')
-        kick =     Input(content, text='Kick (m/s)')
-        is_spin =  Input(content, 'check', text='Spin')
+        self.sim_addr = Input(content, text='Simulator Address')
+        self.sim_port = Input(content, text='Simulator Port')
+        self.rob_id =   Input(content, text='Robot Id')
+        self.color =    Input(content, 'combo', values=('Yellow', 'Blue'))
+        self.speed_x =  Input(content, text='Speed X (m/s)')
+        self.speed_y =  Input(content, text='Speed Y (m/s)')
+        self.speed_w =  Input(content, text='Speed W (rad/s)')
+        self.is_speed = Input(content, 'check', text='Speeds? (otherwise wheels)')
+        self.wheel1 =   Input(content, text='Wheel1 (rad/s)')
+        self.wheel2 =   Input(content, text='Wheel2 (rad/s)')
+        self.wheel3 =   Input(content, text='Wheel3 (rad/s)')
+        self.wheel4 =   Input(content, text='Wheel4 (rad/s)')
+        self.chip =     Input(content, text='Chip (m/s)')
+        self.kick =     Input(content, text='Kick (m/s)')
+        self.is_spin =  Input(content, 'check', text='Spin')
 
-        connect = ttk.Button(content, text='Connect')
+        connect = ttk.Button(content, text='Connect', command=self.connect)
         frame =   ttk.Frame(content)
-        send =    ttk.Button(frame, text='Send')
-        reset =   ttk.Button(frame, text='Reset')
+        send =    ttk.Button(frame, text='Send', command=self.send)
+        reset =   ttk.Button(frame, text='Reset', command=self.reset)
 
         # General layout
         def stack(col, widgets):
@@ -89,8 +98,8 @@ class Client(Tk):
                     w.grid(column=col, row=row, stick=EW)
                 row += 1
 
-        stack(0, [sim_addr, rob_id, is_speed, speed_x, speed_y, speed_w, chip, is_spin, connect])
-        stack(1, [sim_port, color, wheel1, wheel2, wheel3, wheel4, kick, None, frame])
+        stack(0, [self.sim_addr, self.rob_id, self.is_speed, self.speed_x, self.speed_y, self.speed_w, self.chip, self.is_spin, connect])
+        stack(1, [self.sim_port, self.color, self.wheel1, self.wheel2, self.wheel3, self.wheel4, self.kick, None, frame])
 
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
