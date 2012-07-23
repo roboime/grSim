@@ -6,28 +6,31 @@ except ImportError:# for python 2
     import ttk
 
 # Helper class to make labels and input
-class Input(ttk.Frame):
+class Input(ttk.Frame, object):
+
     def __init__(self, parent, widget='entry', **kw):
         ttk.Frame.__init__(self, parent)
-        rows = 0
-        cols = 0
+        rows = cols = 1
+
+        self._var = Variable()
 
         if widget == 'entry':
-            rows = 1; cols = 2
+            cols = 2
             label = ttk.Label(self, text=kw.get('text'), justify='left')
             label.grid(column=0, row=0, sticky=EW)
-            entry = ttk.Entry(self)
+            entry = ttk.Entry(self, textvariable=self._var)
             entry.grid(column=1, row=0, sticky=EW)
 
         elif widget == 'check':
-            rows = cols = 1
-            checkbox = ttk.Checkbutton(self, text=kw.get('text'))
-            checkbox.grid(column=0, row=0, sticky=EW)
+            check = ttk.Checkbutton(self, text=kw.get('text'), onvalue=True, offvalue=False, variable=self._var)
+            check.grid(column=0, row=0, sticky=EW)
 
         elif widget == 'combo':
-            rows = cols = 1
-            combobox = ttk.Combobox(self, values=kw.get('values'), state=('readonly',))
-            combobox.grid(column=0, row=0, sticky=EW)
+            cols = 2
+            label = ttk.Label(self, text=kw.get('text'), justify='left')
+            label.grid(column=0, row=0, sticky=EW)
+            combo = ttk.Combobox(self, values=kw.get('values'), state='readonly', textvariable=self._var)
+            combo.grid(column=1, row=0, sticky=EW)
 
         else:
             raise TypeError
@@ -37,6 +40,14 @@ class Input(ttk.Frame):
 
         for i in range(cols):
             self.rowconfigure(i, weight=1)
+
+    @property
+    def value(self):
+        return self._var.get()
+
+    @value.setter
+    def value(self, value):
+        self._var.set(value)
 
 
 class Client(Tk):
@@ -52,7 +63,21 @@ class Client(Tk):
         pass
 
     def reset(self):
-        pass
+        self.sim_addr.value = '127.0.0.1'
+        self.sim_port.value = 20011
+        self.rob_id.value = 0
+        self.color.value = 'Yellow'
+        self.speed_x.value = 0
+        self.speed_y.value = 0
+        self.speed_w.value = 0
+        self.is_speed.value = True
+        self.wheel1.value = 0
+        self.wheel2.value = 0
+        self.wheel3.value = 0
+        self.wheel4.value = 0
+        self.chip.value = 0
+        self.kick.value = 0
+        self.is_spin.value = False
 
     def __init__(self):
         Tk.__init__(self)
@@ -72,7 +97,7 @@ class Client(Tk):
         self.sim_addr = Input(content, text='Simulator Address')
         self.sim_port = Input(content, text='Simulator Port')
         self.rob_id =   Input(content, text='Robot Id')
-        self.color =    Input(content, 'combo', values=('Yellow', 'Blue'))
+        self.color =    Input(content, 'combo', text='Team', values=('Yellow', 'Blue'))
         self.speed_x =  Input(content, text='Speed X (m/s)')
         self.speed_y =  Input(content, text='Speed Y (m/s)')
         self.speed_w =  Input(content, text='Speed W (rad/s)')
@@ -89,6 +114,9 @@ class Client(Tk):
         frame =   ttk.Frame(content)
         send =    ttk.Button(frame, text='Send', command=self.send)
         reset =   ttk.Button(frame, text='Reset', command=self.reset)
+
+        # reset the controls
+        self.reset()
 
         # General layout
         def stack(col, widgets):
