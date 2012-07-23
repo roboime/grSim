@@ -5,6 +5,12 @@ except ImportError:# for python 2
     from Tkinter import *
     import ttk
 
+import time
+import socket
+
+from messages.grSim_Packet_pb2 import grSim_Packet as Packet
+
+
 # Helper class to make labels and input
 class Input(ttk.Frame, object):
 
@@ -53,8 +59,41 @@ class Input(ttk.Frame, object):
 class Client(Tk):
 
     def loop(self):
-        #TODO: network loop goes here
-        pass
+        # on parse error use last packet
+        try:
+            packet = self.parse()
+            self._packet = packet
+        except TypeError:
+            packet = self._packet
+
+        data = packet.SerializeToString()
+        address = (self.sim_addr.value, int(self.sim_port.value))
+        sent = self.socket.sendto(data, address)
+        print sent
+
+    def parse(self):
+        p = Packet()
+
+        cc = p.commands
+        cc.timestamp = time.time()
+        cc.isteamyellow = self.color == 'Yellow'
+
+        c = cc.robot_commands.add()
+        c.id = int(self.rob_id.value)
+        c.kickspeedx = float(self.kick.value)
+        c.kickspeedz = float(self.chip.value)
+        c.spinner = self.is_spin.value
+        c.veltangent = float(self.speed_x.value)
+        c.velnormal = float(self.speed_y.value)
+        c.velangular = float(self.speed_w.value)
+        c.wheelsspeed = not self.is_speed.value
+        if not self.is_speed.value:
+            c.wheel1 = float(self.wheel1.value)
+            c.wheel2 = float(self.wheel2.value)
+            c.wheel3 = float(self.wheel3.value)
+            c.wheel4 = float(self.wheel4.value)
+
+        return p
 
     def toggle(self):
         self.send = not self.send
@@ -85,6 +124,7 @@ class Client(Tk):
         Tk.__init__(self)
 
         # Attributes
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.interval = 50
         self.send = False
 
@@ -120,6 +160,8 @@ class Client(Tk):
 
         # reset the controls
         self.reset()
+        # generate at leaste one packet
+        self._packet = self.parse()
 
         # General layout
         def stack(col, widgets):

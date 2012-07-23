@@ -1,7 +1,0 @@
-from grSim_Packet_pb2 import grSim_Packet as Packet
-from grSim_Commands_pb2 import grSim_Commands as Commands
-from grSim_Commands_pb2 import grSim_Robot_Command as RobotCommand
-from grSim_Replacement_pb2 import grSim_Replacement as Replacement
-from grSim_Replacement_pb2 import grSim_RobotReplacement as RobotReplacement
-from grSim_Replacement_pb2 import grSim_BallReplacement as BallReplacement
-
