@@ -28,7 +28,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "configwidget.h"
 
 class GLWidgetGraphicsView;
-class GLWidget : public QGLWidget {
+class GLWidget : public QGLWidget, protected QOpenGLFunctions {
 
     Q_OBJECT
 public:

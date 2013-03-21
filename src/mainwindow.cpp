@@ -31,6 +31,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include <QApplication>
 #include <QDir>
 #include <QClipboard>
+#include <QStatusBar>
+#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "logger.h"
@@ -59,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     initLogger((void*)printer);
 
     /* Init Workspace */
-    workspace = new QWorkspace(this);
+    workspace = new QMdiArea(this);
     setCentralWidget(workspace);    
 
     /* Widgets */
@@ -164,7 +166,9 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::LeftDockWidgetArea,dockconfig);
     addDockWidget(Qt::BottomDockWidgetArea, statusWidget);
     addDockWidget(Qt::LeftDockWidgetArea, robotwidget);
-    workspace->addWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
+    //workspace->addSubWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
+    //workspace->addSubWindow(glwidget, Qt::SubWindow | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
+    //workspace->addSubWindow(glwidget);    
     glwidget->setWindowState(Qt::WindowMaximized);
 
     timer = new QTimer(this);
@@ -405,7 +409,7 @@ void MainWindow::toggleFullScreen(bool a)
     }
     else {
         view->close();        
-        workspace->addWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
+        workspace->addSubWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
         glwidget->show();
         glwidget->resize(lastSize);
         glwidget->fullScreen = false;

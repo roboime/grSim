@@ -19,8 +19,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QWorkspace>
+#include <QMainWindow>
+#include <QMdiArea>
 #include <QLabel>
 
 #include "glwidget.h"
@@ -66,7 +66,7 @@ public slots:
 private:
     int getInterval();    
     QTimer *timer;
-    QWorkspace* workspace;
+    QMdiArea* workspace;
     GLWidget *glwidget;
     ConfigWidget *configwidget;
     ConfigDockWidget *dockconfig;

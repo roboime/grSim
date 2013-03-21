@@ -56,7 +56,7 @@ refactor variable names
 
   */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "mainwindow.h"
 #include "winmain.h"
 

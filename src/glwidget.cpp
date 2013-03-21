@@ -337,7 +337,7 @@ void GLWidget::step()
             ssl->step(cfg->DeltaTime());
         }
     }
-    frames ++;
+    ++frames;
 }
 
 void GLWidget::paintGL()

@@ -6,10 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(libs)
 
-set(QT_USE_QTNETWORK TRUE)
-find_package(Qt REQUIRED)
-include(${QT_USE_FILE})
-list(APPEND libs ${QT_LIBRARIES})
+find_package(Qt5Core REQUIRED)
 
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
@@ -32,4 +29,6 @@ add_executable(${app} MACOSX_BUNDLE
 )
 
 target_link_libraries(${app} ${libs})
+
+qt5_use_modules(${app} Core Widgets Gui Network)
 
