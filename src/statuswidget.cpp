@@ -17,23 +17,35 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "statuswidget.h"
+#include <QSizePolicy>
+#define INITIAL_HEIGHT 75
+
+class CustomText : public QTextEdit
+{
+public:
+    CustomText(QWidget *parent) : QTextEdit(parent) {}
+    QSize sizeHint() const { return QSize(600, INITIAL_HEIGHT); }
+};
 
 CStatusWidget::CStatusWidget(CStatusPrinter* _statusPrinter)
-{    
+{
     statusPrinter = _statusPrinter;
     logTime.start();
 
     this->setAllowedAreas(Qt::BottomDockWidgetArea);
     this->setFeatures(QDockWidget::NoDockWidgetFeatures);
 
-    statusText = new QTextEdit(this);
+    //statusText = new QTextEdit(this);
+    statusText = new CustomText(this);
     statusText->setReadOnly(true);
     titleLbl = new QLabel(tr("Messages"));
-
 
     this->setWidget(statusText);
     this->setTitleBarWidget(titleLbl);
 
+    // XXX fix initial size
+    statusText->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
+    //this->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
 }
 
 void CStatusWidget::write(QString str, QColor color)
@@ -45,7 +57,6 @@ void CStatusWidget::write(QString str, QColor color)
     //statusText->append(QString::number(statusText->textCursor().blockNumber()) + " : " + str);
     //statusText->append(QString::number(logTime.elapsed()) + " : " + str);
     statusText->append(str);
-
 
     statusText->setTextColor(QColor("black"));
 }

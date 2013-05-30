@@ -70,7 +70,6 @@ public slots:
 private:
     CStatusPrinter *statusPrinter;
     QTime logTime;
-
 };
 
 #endif // CSTATUSWIDGET_H
