@@ -62,16 +62,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Init Workspace */
     workspace = new QMdiArea(this);
-    setCentralWidget(workspace);    
+    setCentralWidget(workspace);
 
     /* Widgets */
 
     configwidget = new ConfigWidget();
     dockconfig = new ConfigDockWidget(this,configwidget);
+    dockconfig->setWindowTitle(tr("Settings"));
 
     glwidget = new GLWidget(this,configwidget);
     glwidget->setWindowTitle(tr("Simulator"));
-    glwidget->resize(512,512);    
+    glwidget->resize(512,512);
 
     visionServer = NULL;
     commandSocket = NULL;
@@ -169,7 +170,8 @@ MainWindow::MainWindow(QWidget *parent)
     //workspace->addSubWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
     //workspace->addSubWindow(glwidget, Qt::SubWindow | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
     //workspace->addSubWindow(glwidget);    
-    glwidget->setWindowState(Qt::WindowMaximized);
+    //glwidget->setWindowState(Qt::WindowMaximized);
+    setCentralWidget(glwidget);
 
     timer = new QTimer(this);
     timer->setInterval(getInterval());
