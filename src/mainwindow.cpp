@@ -55,17 +55,13 @@ MainWindow::MainWindow(QWidget *parent)
     QDir dir = qApp->applicationDirPath();
     dir.cdUp();
     current_dir = dir.path();
+
     /* Status Logger */
     printer = new CStatusPrinter();
     statusWidget = new CStatusWidget(printer);
     initLogger((void*)printer);
 
-    /* Init Workspace */
-    workspace = new QMdiArea(this);
-    setCentralWidget(workspace);
-
     /* Widgets */
-
     configwidget = new ConfigWidget();
     dockconfig = new ConfigDockWidget(this,configwidget);
     dockconfig->setWindowTitle(tr("Settings"));
@@ -88,9 +84,8 @@ MainWindow::MainWindow(QWidget *parent)
     glwidget->ssl->blueStatusSocket = blueStatusSocket;
     glwidget->ssl->yellowStatusSocket = yellowStatusSocket;
 
-
-
     robotwidget = new RobotWidget(this);
+
     /* Status Bar */
     fpslabel = new QLabel(this);
     cursorlabel = new QLabel(this);
@@ -107,14 +102,14 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->addWidget(selectinglabel);
     statusBar()->addWidget(vanishlabel);
     statusBar()->addWidget(noiselabel);
-    /* Menus */
 
+    /* Menus */
     QMenu *fileMenu = new QMenu("&File");
-    menuBar()->addMenu(fileMenu);    
+    menuBar()->addMenu(fileMenu);
     QAction *takeSnapshotAct = new QAction("&Save snapshot to file", fileMenu);
     takeSnapshotAct->setShortcut(QKeySequence("F3"));
     QAction *takeSnapshotToClipboardAct = new QAction("&Copy snapshot to clipboard", fileMenu);
-    takeSnapshotToClipboardAct->setShortcut(QKeySequence("F4"));    
+    takeSnapshotToClipboardAct->setShortcut(QKeySequence("F4"));
     QAction *exit = new QAction("E&xit", fileMenu);
     exit->setShortcut(QKeySequence("Ctrl+X"));
     fileMenu->addAction(takeSnapshotAct);
@@ -167,10 +162,6 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::LeftDockWidgetArea,dockconfig);
     addDockWidget(Qt::BottomDockWidgetArea, statusWidget);
     addDockWidget(Qt::LeftDockWidgetArea, robotwidget);
-    //workspace->addSubWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
-    //workspace->addSubWindow(glwidget, Qt::SubWindow | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);    
-    //workspace->addSubWindow(glwidget);    
-    //glwidget->setWindowState(Qt::WindowMaximized);
     setCentralWidget(glwidget);
 
     timer = new QTimer(this);
@@ -237,7 +228,6 @@ MainWindow::MainWindow(QWidget *parent)
     robotwidget->robotCombo->setCurrentIndex(0);
     robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = 0;
-    scene = new QGraphicsScene(0,0,800,600);    
 }
 
 MainWindow::~MainWindow()
@@ -258,7 +248,7 @@ void MainWindow::showHideSimulator(bool v)
 
 void MainWindow::changeCurrentRobot()
 {
-    glwidget->Current_robot=robotwidget->robotCombo->currentIndex();    
+    glwidget->Current_robot=robotwidget->robotCombo->currentIndex();
     robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
     robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
@@ -309,16 +299,16 @@ void MainWindow::update()
     lvv[1]=vv[1];
     lvv[2]=vv[2];
     QString ss;
-    fpslabel->setText(QString("Frame rate: %1 fps").arg(ss.sprintf("%06.2f",glwidget->getFPS())));        
+    fpslabel->setText(QString("Frame rate: %1 fps").arg(ss.sprintf("%06.2f",glwidget->getFPS())));
     if (glwidget->ssl->selected!=-1)
     {
         selectinglabel->setVisible(true);
         if (glwidget->ssl->selected==-2)
-        {            
+        {
             selectinglabel->setText("Ball");
         }
         else
-        {            
+        {
             int R = glwidget->ssl->selected%ROBOT_COUNT;
             int T = glwidget->ssl->selected/ROBOT_COUNT;
             if (T==0) selectinglabel->setText(QString("%1:Blue").arg(R));
@@ -367,7 +357,7 @@ void MainWindow::changeBallDamping()
 }
 
 void MainWindow::restartSimulator()
-{        
+{
     delete glwidget->ssl;
     glwidget->ssl = new SSLWorld(glwidget,glwidget->cfg,glwidget->forms[2],glwidget->forms[2]);
     glwidget->ssl->glinit();
@@ -393,32 +383,19 @@ void MainWindow::ballMenuTriggered(QAction* act)
     else if (act->text()==tr("Put on Penalty 2")) glwidget->putBall(-p, 0);
 }
 
-void MainWindow::toggleFullScreen(bool a)
+void MainWindow::toggleFullScreen(bool activate)
 {
-    if (a)
-    {
-        view = new GLWidgetGraphicsView(scene,glwidget);
-        lastSize = glwidget->size();        
-        view->setViewport(glwidget);
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-        view->setFrameStyle(0);
-        view->showFullScreen();
-        view->setFocus();        
-        glwidget->fullScreen = true;
-        fullScreenAct->setChecked(true);
-    }
-    else {
-        view->close();        
-        workspace->addSubWindow(glwidget, Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
-        glwidget->show();
-        glwidget->resize(lastSize);
-        glwidget->fullScreen = false;
-        fullScreenAct->setChecked(false);
-        glwidget->setFocusPolicy(Qt::StrongFocus);
-        glwidget->setFocus();
-    }
+  if (activate) {
+    showFullScreen();
+    dockconfig->hide();
+    robotwidget->hide();
+    statusWidget->hide();
+  } else {
+    showNormal();
+    dockconfig->show();
+    robotwidget->show();
+    statusWidget->show();
+  }
 }
 
 void MainWindow::setCurrentRobotPosition()

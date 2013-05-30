@@ -34,7 +34,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
-    ~MainWindow();    
+    ~MainWindow();
 public slots:
     void update();
     void updateRobotLabel();
@@ -43,8 +43,8 @@ public slots:
     void changeCurrentRobot();
     void changeCurrentTeam();
 
-    void changeBallMass();   
-    void changeBallGroundSurface();    
+    void changeBallMass();
+    void changeBallGroundSurface();
     void changeBallDamping();
     void changeGravity();
     void changeTimer();
@@ -63,14 +63,14 @@ public slots:
     void reconnectBlueStatusSocket();
     void reconnectVisionSocket();
     void recvActions();
+
 private:
-    int getInterval();    
+    int getInterval();
     QTimer *timer;
-    QMdiArea* workspace;
     GLWidget *glwidget;
     ConfigWidget *configwidget;
     ConfigDockWidget *dockconfig;
-    RobotWidget *robotwidget;        
+    RobotWidget *robotwidget;
 
     CStatusPrinter *printer;
     CStatusWidget *statusWidget;
@@ -80,8 +80,6 @@ private:
     QLabel *fpslabel,*cursorlabel,*selectinglabel,*vanishlabel,*noiselabel;
     QString current_dir;
 
-    QGraphicsScene *scene;
-    GLWidgetGraphicsView *view;
     QSize lastSize;
     RoboCupSSLServer *visionServer;
     QUdpSocket *commandSocket;
