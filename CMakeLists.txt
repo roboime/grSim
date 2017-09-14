@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 ## Project branding, version and package mantainer
 project(grSim)
+<<<<<<< HEAD
 <<<<<<< e46c98d0c49c755b244b518754ce3f195cd53729
 set(VERSION "1.0.0a2")
 #set(VENDOR "Parsian")
@@ -12,6 +13,11 @@ set(VERSION "1.0.1")
 set(VENDOR "RoboIME")
 set(MAINTAINER "Naum Azeredo <naumazeredo@gmail.com>")
 >>>>>>> Changed version to 1.0.1
+=======
+set(VERSION "1.0.1")
+set(VENDOR "RoboIME")
+set(MAINTAINER "Naum Azeredo <naumazeredo@gmail.com>")
+>>>>>>> 68b322d085a84690b965815b1e035a908ebc75ee
 
 
 # some utils and helper vars
@@ -244,7 +250,7 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_BINARY_DIR}/README.txt")
 #set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/WELCOME.txt")
 set(CPACK_PACKAGE_VERSION ${VERSION})
 # Debian based specific
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libode1 (>=0.11), vartypes (>=0.7.0), libqt4-network (>=4.8.0), libqt4-core, libqt4-gui, libqt4-opengl")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libode1 (>=0.11), vartypes (>=0.7.0), libqt4-network (>=4.8.0), libqt4-core, libqt4-gui, libqt4-opengl, libprotobuf-dev (>= 2.5.0)")
 if(FLAVOR)
     set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME_LOWER}_${CPACK_PACKAGE_VERSION}-${FLAVOR}_${ARCH}")
 else()
