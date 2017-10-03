@@ -32,6 +32,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "messages_robocup_ssl_geometry.pb.h"
 #include "messages_robocup_ssl_refbox_log.pb.h"
 #include "messages_robocup_ssl_wrapper.pb.h"
+#include <stdio.h>
 
 
 #define ROBOT_GRAY 0.4
@@ -405,6 +406,14 @@ void SSLWorld::step(dReal dt)
         dBodyAddForce(ball->body,ballfx,ballfy,ballfz);
         if (dt==0) dt=last_dt;
         else last_dt = dt;
+
+        const float EPS = 1e-1;
+        bool is_retreating = (ballvel[0] < -EPS);
+        if (is_retreating){
+            ball->setBodyPosition(0.2,0.2,0);
+            dBodySetLinearVel(ball->body, 0.0, 0.0, 0.0);
+            dBodySetAngularVel(ball->body, 0.0, 0.0, 0.0);
+        }
 
         selected = -1;
         p->step(dt*0.2);
